@@ -1,0 +1,142 @@
+
+
+Nuget manager is used to manage the packages.
+
+
+
+//Selenium 
+IWebDriver driver = new ChromeDriver();
+driver.Manage().Window.Maximize();
+
+//Launch URL
+driver.Navigate().GoToUrl("url");
+
+//Store Locator
+IWebElement element = By.Id("locator");
+
+//Type
+driver.FindElement(element).SendKeys("Hello");
+
+//Click
+driver.FindElement(element).Click();
+
+//Dropdown
+SelectElement dd = new SelectElement(driver.FindElement(By.Xpath("sdf")));
+dd.SelectByText("ABC");
+dd.SelectByValue("abc");
+dd.SelectByIndex(2);
+dd.SelectedOption.Text;
+dd.AllSelectedOptions
+dd.DeselectByText("ac");
+dd.DeselectByValue();
+dd.DeselectByIndex();
+dd.DeselectAll();
+
+==========================================================================================
+
+#NUNIT
+[OneTimeSetup]
+[Setup]
+[Test]
+[TearDown]
+[OneTimeTearDown]
+
+[Test]
+[TestCase("admin","password")] // Used to pass data to the test case // Parameterisation
+        public void LoginTest(string username, string pwd)
+        {
+            string actualMsg = new LandingPage(driver).ClickLoginLink()
+                .LoginToPortal(username, pwd).GetGreetingMessage();
+
+            Assert.AreEqual("Hello admin!", actualMsg);
+
+        }
+
+If a Test as 2 [TestCase] attribute. that means the test will be executed twice with the data in the test case attribute
+
+
+[TestCaseSource("method")]
+This attribute helps to fetch the data form a method. when the number of data sets are more , it gets difficult to use [TestCase] and we prefer data coming
+from a method.
+The method must be stataic, since we are returing multiple time data from same method, we have to use yeild keyword,
+and since there are multiple sets of data being returned, the return type is IEnumerable<TestCaseData>
+public static IEnumerable<TestCaseData> getTestData()
+{
+    yeild return new TestCaseData("admin","pass","abc","xyz");
+    yeild return new TestCaseData("admin2","pass2","abc2","xyz2");
+    yeild return new TestCaseData("admin3","pass3","abc3","xyz3");
+}
+
+Usage 
+[TestCaseSource("getTestData")]
+
+
+Category ==> like tags so that we can mark tests to a particular category and run the tests only belonging to the specified category.
+[Test,Category("Smoke")]
+==========================================================================================
+
+
+RUN TEST VIA Command Line
+//The below command will run all tests in the project
+dotnet test <path of the project .csproj file>
+
+//TO RUN TESTS BASED ON CATEGORY
+dotnet test <path of the project .csproj file> --filter TestCategory=Smoke
+
+ORDERING TEST 
+We can user Order attribute
+[Test,Order(1)]
+==========================================================================================
+
+Parallel Execution 
+
+ThreadLocal<IWebDriver> driver = new ThreadLocal<IWebDriver>();
+
+and now where ever we want to user the driver object we need to call it using driver.Value
+
+driver.value = new ChromeDriver();
+driver.value.Manage().Window.Maximise();
+
+driver.Value.FindElement();
+
+[Parallelizable(ParallelScope.All)] // This will run all the data sets in parallel , for this we need to mention this in the test method level 
+
+[Parallelizable(ParallelScope.Children)] // This will run all the Test mthod of a class in paralle, we need to add this attribute above the class name
+
+[Parallelizable(ParallelScope.Self)] // this will run the Test Calsses in pralle, we need to specify this in Class level in every test class.
+
+==========================================================================================
+
+//Configuration file in f/w
+add app.config (Add item --> Misc -->)
+Its an xml file
+<configuration>
+    <appSettings>
+        <add key="browser" value="Chrome"/>
+    </appSettings>
+</configuration>
+
+
+To read the values form config file , add the configuration manager package from nuget manager.
+
+String browserName = ConfigurationManager.AppSettings["browser"] (This looks for .config file in the root of the project)
+
+
+For Mac its observed thta we need to add below lines of code in the project file
+
+<Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+    <Copy SourceFiles="app.config" DestinationFiles="$(OutDir)\testhost.dll.config" />
+</Target>
+
+
+==========================================================================================
+#Appium
+
+* Appium/Client-->Post/Session-->Apppium Server(node.js)<----->Device
+
+* Appium uses UIAutomator2 driver for Android and XCUITest Driver for iOS automation
+
+* 
+
+
+
